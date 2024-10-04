@@ -1,5 +1,6 @@
 import Branding from "@/components/branding";
 import ContentBlock from "@/components/content-block";
+import PetButton from "@/components/pet-buttons";
 import PetDetails from "@/components/pet-details";
 import PetList from "@/components/pet-list";
 import SearchForm from "@/components/search-form";
@@ -23,9 +24,9 @@ const Dashboard = async () => {
           <ContentBlock>
             <PetList />
 
-            {/* <div className="absolute bottom-4 right-4">
-                <PetButton actionType="add" />
-              </div> */}
+            <div className="absolute bottom-4 right-4">
+              <PetButton actionType="add" />
+            </div>
           </ContentBlock>
         </div>
 
