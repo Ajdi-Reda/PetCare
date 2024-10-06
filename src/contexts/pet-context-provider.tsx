@@ -1,5 +1,6 @@
 "use client";
 
+import { addPet } from "@/actions/actions";
 import { Pet } from "@/lib/types";
 import React, { createContext, useState } from "react";
 
@@ -13,39 +14,36 @@ type TPetContext = {
   selectedPetId: string | null;
   selectedPet: Pet | undefined;
   numberOfPets: number;
-  handleCheckoutPet: (id: string) => void;
+  // handleCheckoutPet: (id: string) => void;
   handleSelectPetId: (id: string) => void;
   handleAddPet: (newPet: Omit<Pet, "id">) => void;
-  handleEditPet: (id: string, pet: Omit<Pet, "id">) => void;
+  // handleEditPet: (id: string, pet: Omit<Pet, "id">) => void;
 };
 
 export const PetContext = createContext<TPetContext | null>(null);
-const PetContextProvider = ({ data, children }: PetContextProps) => {
-  const [pets, setPets] = useState(data);
+const PetContextProvider = ({ data: pets, children }: PetContextProps) => {
+  // const [pets, setPets] = useState(data);
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
 
   const selectedPet = pets.find((pet) => pet.id === selectedPetId);
   const numberOfPets = pets.length;
 
-  const handleCheckoutPet = (id: string) => {
-    setPets((prev) => prev.filter((pet) => pet.id !== id));
-    setSelectedPetId(null);
-  };
+  // const handleCheckoutPet = (id: string) => {
+  //   setPets((prev) => prev.filter((pet) => pet.id !== id));
+  //   setSelectedPetId(null);
+  // };
 
   const handleSelectPetId = (id: string) => {
     setSelectedPetId(id);
   };
 
   const handleAddPet = (pet: Omit<Pet, "id">) => {
-    setPets((prev) => [
-      ...prev,
-      { id: new Date().getTime().toString(), ...pet },
-    ]);
+    addPet(pet);
   };
 
-  const handleEditPet = (id: string, pet: Omit<Pet, "id">) => {
-    setPets((prev) => prev.map((p) => (p.id === id ? { id, ...pet } : p)));
-  };
+  // const handleEditPet = (id: string, pet: Omit<Pet, "id">) => {
+  //   setPets((prev) => prev.map((p) => (p.id === id ? { id, ...pet } : p)));
+  // };
 
   return (
     <PetContext.Provider
@@ -54,10 +52,10 @@ const PetContextProvider = ({ data, children }: PetContextProps) => {
         selectedPetId,
         selectedPet,
         numberOfPets,
-        handleCheckoutPet,
+        // handleCheckoutPet,
         handleSelectPetId,
         handleAddPet,
-        handleEditPet,
+        // handleEditPet,
       }}
     >
       {children}
