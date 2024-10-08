@@ -5,26 +5,14 @@ import { Textarea } from "./ui/textarea";
 import { usePetContext } from "@/lib/hooks";
 import PetFormBtn from "./pet-form-btn";
 import { useForm } from "react-hook-form";
-import { Pet } from "@prisma/client";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { DEFAULT_PET_IMAGE } from "@/lib/constants";
+import { petFromSchema, TPetForm } from "@/lib/validations";
 
 type PetFormProps = {
   actionType: "add" | "edit";
   onFormSubmission: () => void;
 };
-
-const petFromSchema = z.object({
-  name: z.string().trim().min(1, { message: "Name is required" }).max(20),
-  ownerName: z
-    .string()
-    .trim()
-    .min(1, { message: "Owner name is required" })
-    .max(20),
-  imageUrl: z.string().trim().url().optional(),
-  age: z.number().min(0).max(100),
-  notes: z.string().trim().optional(),
-});
 
 const PetForm = ({ actionType, onFormSubmission }: PetFormProps) => {
   const { handleAddPet, handleEditPet, selectedPet } = usePetContext();
@@ -32,27 +20,21 @@ const PetForm = ({ actionType, onFormSubmission }: PetFormProps) => {
   const {
     register,
     trigger,
+    getValues,
     formState: { errors },
-  } = useForm<Pet>({
+  } = useForm<TPetForm>({
     resolver: zodResolver(petFromSchema),
   });
   return (
     <form
-      action={async (formData) => {
+      action={async () => {
         const isValid = await trigger();
         if (!isValid) {
           return;
         }
         onFormSubmission();
-        const petData = {
-          name: formData.get("name") as string,
-          ownerName: formData.get("ownerName") as string,
-          imageUrl:
-            (formData.get("imageUrl") as string) ||
-            "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
-          age: parseInt(formData.get("age") as string),
-          notes: formData.get("notes") as string,
-        };
+        const petData = getValues();
+        petData.imageUrl = petData.imageUrl || DEFAULT_PET_IMAGE;
         if (actionType === "add") {
           handleAddPet(petData);
         } else if (actionType === "edit") {
