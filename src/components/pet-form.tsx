@@ -17,11 +17,16 @@ const PetForm = ({ actionType, onFormSubmission }: PetFormProps) => {
 
   const {
     register,
+    trigger,
     formState: { errors },
   } = useForm<Pet>();
   return (
     <form
       action={async (formData) => {
+        const isValid = await trigger();
+        if (!isValid) {
+          return;
+        }
         onFormSubmission();
         const petData = {
           name: formData.get("name") as string,
@@ -43,13 +48,31 @@ const PetForm = ({ actionType, onFormSubmission }: PetFormProps) => {
       <div className="space-y-3">
         <div className="space-y-1">
           <Label htmlFor="name">Name</Label>
-          <Input id="name" {...register("name")} />
+          <Input
+            id="name"
+            {...register("name", {
+              required: "Name is required",
+              minLength: {
+                value: 3,
+                message: "Name must be at least 3 characters",
+              },
+            })}
+          />
           {errors.name && <p className="text-red-500">{errors.name.message}</p>}
         </div>
 
         <div className="space-y-1">
           <Label htmlFor="ownerName">Owner Name</Label>
-          <Input id="ownerName" {...register("ownerName")} />
+          <Input
+            id="ownerName"
+            {...register("ownerName", {
+              required: "Owner name is required",
+              maxLength: {
+                value: 20,
+                message: "Owner name must not exceed 20 characters",
+              },
+            })}
+          />
           {errors.ownerName && (
             <p className="text-red-500">{errors.ownerName.message}</p>
           )}
