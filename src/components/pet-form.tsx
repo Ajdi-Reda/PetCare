@@ -24,6 +24,13 @@ const PetForm = ({ actionType, onFormSubmission }: PetFormProps) => {
     formState: { errors },
   } = useForm<TPetForm>({
     resolver: zodResolver(petFromSchema),
+    defaultValues: {
+      name: selectedPet?.name || "",
+      ownerName: selectedPet?.ownerName || "",
+      imageUrl: selectedPet?.imageUrl || "",
+      age: selectedPet?.age,
+      notes: selectedPet?.notes || "",
+    },
   });
   return (
     <form
