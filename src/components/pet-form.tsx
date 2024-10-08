@@ -6,11 +6,25 @@ import { usePetContext } from "@/lib/hooks";
 import PetFormBtn from "./pet-form-btn";
 import { useForm } from "react-hook-form";
 import { Pet } from "@prisma/client";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type PetFormProps = {
   actionType: "add" | "edit";
   onFormSubmission: () => void;
 };
+
+const petFromSchema = z.object({
+  name: z.string().trim().min(1, { message: "Name is required" }).max(20),
+  ownerName: z
+    .string()
+    .trim()
+    .min(1, { message: "Owner name is required" })
+    .max(20),
+  imageUrl: z.string().trim().url().optional(),
+  age: z.number().min(0).max(100),
+  notes: z.string().trim().optional(),
+});
 
 const PetForm = ({ actionType, onFormSubmission }: PetFormProps) => {
   const { handleAddPet, handleEditPet, selectedPet } = usePetContext();
@@ -19,7 +33,9 @@ const PetForm = ({ actionType, onFormSubmission }: PetFormProps) => {
     register,
     trigger,
     formState: { errors },
-  } = useForm<Pet>();
+  } = useForm<Pet>({
+    resolver: zodResolver(petFromSchema),
+  });
   return (
     <form
       action={async (formData) => {
